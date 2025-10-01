@@ -145,8 +145,8 @@ def make_commits(repo: Path, positions, start_date: dt.date, offset_cols: int, i
 def main():
     parser = argparse.ArgumentParser(description="Generate SHOWKAT contribution art across the current contribution window.")
     parser.add_argument("--intensity", type=int, default=5, help="Commits per active day (pixel). Default: 5")
-    parser.add_argument("--anchor", choices=["left", "center", "right"], default="right",
-                        help="Base alignment within the rolling 52-week window. Default: right")
+    parser.add_argument("--anchor", choices=["left", "center", "right"], default="left",
+                        help="Base alignment within the rolling 52-week window. Default: left")
     parser.add_argument("--offset", type=int, default=0,
                         help="Additional column offset applied after anchoring (positive shifts right, negative left). Default: 0")
     parser.add_argument("--start-date", type=str, default=None,
