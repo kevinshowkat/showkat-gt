@@ -149,6 +149,8 @@ def main():
                         help="Base alignment within the rolling 52-week window. Default: right")
     parser.add_argument("--offset", type=int, default=0,
                         help="Additional column offset applied after anchoring (positive shifts right, negative left). Default: 0")
+    parser.add_argument("--start-date", type=str, default=None,
+                        help="Optional ISO date (YYYY-MM-DD) for the Sunday column 0 should represent.")
     args = parser.parse_args()
 
     repo = Path(__file__).resolve().parent
@@ -184,7 +186,16 @@ def main():
             f"Word width {width} with effective offset {effective_offset} exceeds {GRID_WEEKS} weeks. Adjust anchor/offset."
         )
 
-    start_date = compute_start_sunday(dt.date.today())
+    if args.start_date:
+        try:
+            provided = dt.datetime.strptime(args.start_date, "%Y-%m-%d").date()
+        except ValueError:
+            raise SystemExit("--start-date must be in YYYY-MM-DD format")
+        if provided.weekday() != 6:
+            raise SystemExit("--start-date must be a Sunday to align with contribution columns.")
+        start_date = provided
+    else:
+        start_date = compute_start_sunday(dt.date.today())
     made = make_commits(repo, positions, start_date, effective_offset, max(1, args.intensity))
 
     print(
